@@ -30,21 +30,6 @@
 #include <stdbool.h>
 
 
-// DEBUG MACROS
-
-#ifdef MQTT_DEBUG
-#define MQTTDEBUG(...) debug_printf(__VA_ARGS__)
-#else
-#define MQTTDEBUG(...)
-#endif
-
-#ifdef MQTT_PARSE_DEBUG
-#define MQTTPARSEDEBUG(...) debug_printf(__VA_ARGS__)
-#else
-#define MQTTPARSEDEBUG(...)
-#endif
-
-
 // KEEP ALIVE
 
 #ifndef MQTT_KEEPALIVE
@@ -116,7 +101,8 @@ typedef struct
   char const *will_topic;       // A value != NULL enables the will feature
   uint8_t will_qos;
   bool will_retain;
-  char const *will_message;
+  void const *will_message;
+  uint16_t will_message_length;
   uip_ipaddr_t target_ip;
 
   // Pointer to an array of (char const*) of topic strings to be automatically
@@ -137,8 +123,12 @@ bool mqtt_is_connected(void);
 // return false if there is not enough buffer space
 bool mqtt_construct_publish_packet(char const *topic, const void *payload,
                                    uint16_t payload_length, bool retain);
+bool mqtt_construct_publish_packet_P(PGM_P topic, const void *payload,
+                                     uint16_t payload_length, bool retain);
 bool mqtt_construct_subscribe_packet(char const *topic);
+bool mqtt_construct_subscribe_packet_P(PGM_P topic);
 bool mqtt_construct_unsubscribe_packet(char const *topic);
+bool mqtt_construct_unsubscribe_packet_P(PGM_P topic);
 bool mqtt_construct_zerolength_packet(uint8_t msg_type);
 bool mqtt_construct_ack_packet(uint8_t msg_type, uint16_t msgid);
 
